@@ -14,6 +14,7 @@ $$('.reveal, .timeline-wrap').forEach((el) => observer.observe(el));
 
 const altitude = $('[data-altitude]');
 const topbar = $('.topbar');
+const portraitFlight = $('.portrait-flight');
 let ticking = false;
 
 function updateFlightData() {
@@ -22,6 +23,11 @@ function updateFlightData() {
   const feet = Math.round(1200 + Math.sin(progress * Math.PI) * 33800);
   altitude.textContent = feet.toLocaleString('pt-BR').padStart(6, '0');
   topbar.classList.toggle('scrolled', scrollY > 40);
+  if (portraitFlight) {
+    const rect = portraitFlight.getBoundingClientRect();
+    const flightProgress = Math.max(0, Math.min(1, -rect.top / Math.max(1, rect.height - innerHeight)));
+    portraitFlight.style.setProperty('--p', flightProgress.toFixed(3));
+  }
   ticking = false;
 }
 

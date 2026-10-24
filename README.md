@@ -1,6 +1,8 @@
 # Homenagem Lito Souza a David Xavier
 
-Uma homenagem digital, independente e em evolução a **Lito Sousa**, criada por **David Xavier / XG Plans**.
+Uma homenagem digital, independente e em evolução a **Lito Sousa**, criada por **David Xavier / XD Plans**.
+
+[![Deploy na Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fdavidxavierxdplanschat%2Fhomenagem-lito-souza-david-xavier&output-directory=dist)
 
 > Algumas pessoas não partem. Viram horizonte.
 
@@ -10,7 +12,7 @@ Lito aproximou a aviação de milhões de pessoas ao transformar sistemas comple
 
 Para muitas pessoas, um cockpit é apenas um conjunto de botões. Para quem trabalha com tecnologia, ele representa algo maior: sinais organizados, informação confiável e clareza para decidir o próximo movimento.
 
-O site também reconhece **Mila Seidl** e a equipe do **Aviões e Músicas**, que participam da continuidade desse legado. A XG Plans deseja força, serenidade e sucesso nessa nova etapa e se coloca à disposição para colaborar, quando e se for útil, com inteligência artificial, automação, dados, desenvolvimento web e experiências digitais.
+O site também reconhece **Mila Seidl** e a equipe do **Aviões e Músicas**, que participam da continuidade desse legado. A XD Plans deseja força, serenidade e sucesso nessa nova etapa e se coloca à disposição para colaborar, quando e se for útil, com inteligência artificial, automação, dados, desenvolvimento web e experiências digitais.
 
 ## Experiência
 
@@ -59,6 +61,17 @@ python -m http.server 4176 -d dist
 
 Depois, abra `http://localhost:4176`.
 
+## Publicar na Vercel
+
+O projeto já inclui `vercel.json` apontando para a pasta estática `dist`, portanto não precisa de framework, instalação de dependências ou comando de build.
+
+1. Clique no botão **Deploy na Vercel** no início deste README.
+2. Confirme a importação do repositório.
+3. Mantenha o preset como **Other**; a saída `dist` já está configurada no código.
+4. Clique em **Deploy**.
+
+Depois disso, cada novo commit na branch `main` poderá gerar uma nova publicação automaticamente.
+
 ## Princípios do projeto
 
 1. Respeito à memória de Lito, à família e à equipe.
@@ -77,6 +90,6 @@ Depois, abra `http://localhost:4176`.
 
 ## Autoria e respeito
 
-Concepção de **David Xavier / XG Plans**. Esta é uma homenagem independente, sem vínculo oficial com Lito Sousa, sua família, o canal Aviões e Músicas ou suas empresas.
+Concepção de **David Xavier / XD Plans**. Esta é uma homenagem independente, sem vínculo oficial com Lito Sousa, sua família, o canal Aviões e Músicas ou suas empresas.
 
 O código está publicamente visível. Nenhuma licença de reutilização foi definida até o momento.

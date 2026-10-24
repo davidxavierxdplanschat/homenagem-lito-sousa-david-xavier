@@ -267,6 +267,7 @@ h2 em { font-family:'Playfair Display',serif; font-weight: 500; color: var(--sky
 .david-orbit i { position:absolute; inset:50% auto auto 50%; width:50%; height:1px; transform-origin:left; background:linear-gradient(90deg,#286f7f,transparent); animation:orbit 10s linear infinite; }
 .david-orbit i::after { content:''; position:absolute; right:0; top:-4px; width:9px; height:9px; background:#286f7f; border-radius:50%; box-shadow:0 0 15px #286f7f; }
 .david-orbit i:nth-child(2){animation-delay:-3.33s}.david-orbit i:nth-child(3){animation-delay:-6.66s}
+.project-link { display:flex; justify-content:space-between; gap:2rem; margin-top:2.5rem; padding:1rem 0; border-top:1px solid rgba(7,20,31,.25); border-bottom:1px solid rgba(7,20,31,.25); color:#286f7f; font:500 .63rem 'DM Mono',monospace; letter-spacing:.1em; text-transform:uppercase; text-decoration:none; }
 .david .section-index { color:#1e6f75; }
 .david h2 em { color:#347d94; }
 .david-copy>p:not(.overline) { line-height:1.8; color:rgba(7,20,31,.67); }

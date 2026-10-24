@@ -1,8 +1,8 @@
-# Homenagem Lito Souza a David Xavier
+# Homenagem Lito Sousa a David Xavier
 
 Uma homenagem digital, independente e em evolução a **Lito Sousa**, criada por **David Xavier / XD Plans**.
 
-[![Deploy na Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fdavidxavierxdplanschat%2Fhomenagem-lito-souza-david-xavier&output-directory=dist)
+[![Deploy na Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fdavidxavierxdplanschat%2Fhomenagem-lito-sousa-david-xavier&output-directory=dist)
 
 > Algumas pessoas não partem. Viram horizonte.
 

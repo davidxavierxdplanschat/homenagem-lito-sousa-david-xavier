@@ -65,6 +65,42 @@ $$('.mode').forEach((button) => button.addEventListener('click', () => {
   $('[data-efficiency]').textContent = data.efficiency;
 }));
 
+const fearContent = {
+  sounds: {
+    kicker: 'O AVIÃO MUDA DE CONFIGURAÇÃO',
+    title: 'Nem todo som é sinal de falha.',
+    copy: 'Flaps, trem de pouso, bombas e mudanças de potência produzem sons diferentes ao longo do voo. Entender a origem desses ruídos ajuda a trocar o susto pela leitura do que a aeronave está fazendo.',
+    status: 'VOO ESTÁVEL'
+  },
+  turbulence: {
+    kicker: 'O AR TAMBÉM TEM MOVIMENTO',
+    title: 'Desconforto não é sinônimo de catástrofe.',
+    copy: 'A turbulência pode assustar, mas tripulações recebem previsões, relatórios e treinamento para lidar com ela. O gesto mais importante do passageiro é simples: permanecer com o cinto afivelado.',
+    status: 'TURBULÊNCIA MONITORADA'
+  },
+  goaround: {
+    kicker: 'SEGURANÇA TAMBÉM É TENTAR DE NOVO',
+    title: 'Arremeter é uma decisão segura.',
+    copy: 'Quando as condições para pousar não estão adequadas, interromper a aproximação e subir novamente é um procedimento normal. Não significa fracasso: significa que os limites operacionais foram respeitados.',
+    status: 'NOVA APROXIMAÇÃO'
+  }
+};
+
+$$('.fear-tab').forEach((button) => button.addEventListener('click', () => {
+  const key = button.dataset.fear;
+  const content = fearContent[key];
+  $$('.fear-tab').forEach((tab) => {
+    const selected = tab === button;
+    tab.classList.toggle('active', selected);
+    tab.setAttribute('aria-selected', String(selected));
+  });
+  $('.flight-window').dataset.flightState = key;
+  $('[data-fear-kicker]').textContent = content.kicker;
+  $('[data-fear-title]').textContent = content.title;
+  $('[data-fear-copy]').textContent = content.copy;
+  $('.flight-readout span').textContent = content.status;
+}));
+
 function updateClock() {
   $('#panel-clock').textContent = new Intl.DateTimeFormat('pt-BR', {
     hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false

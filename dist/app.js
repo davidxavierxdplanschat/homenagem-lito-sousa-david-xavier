@@ -15,7 +15,16 @@ $$('.reveal, .timeline-wrap').forEach((el) => observer.observe(el));
 const altitude = $('[data-altitude]');
 const topbar = $('.topbar');
 const portraitFlight = $('.portrait-flight');
+const approachReadout = $('[data-approach]');
 let ticking = false;
+
+const smoothstep = (edge0, edge1, value) => {
+  const x = Math.max(0, Math.min(1, (value - edge0) / (edge1 - edge0)));
+  return x * x * (3 - 2 * x);
+};
+
+const phaseBand = (value, enterStart, enterEnd, leaveStart, leaveEnd) =>
+  smoothstep(enterStart, enterEnd, value) * (1 - smoothstep(leaveStart, leaveEnd, value));
 
 function updateFlightData() {
   const scrollMax = document.documentElement.scrollHeight - innerHeight;
@@ -26,7 +35,23 @@ function updateFlightData() {
   if (portraitFlight) {
     const rect = portraitFlight.getBoundingClientRect();
     const flightProgress = Math.max(0, Math.min(1, -rect.top / Math.max(1, rect.height - innerHeight)));
+    const slowOpening = Math.min(1, flightProgress / .34);
+    const cameraProgress = flightProgress < .34
+      ? smoothstep(0, 1, slowOpening) * .035
+      : .035 + smoothstep(.34, 1, flightProgress) * .965;
     portraitFlight.style.setProperty('--p', flightProgress.toFixed(3));
+    portraitFlight.style.setProperty('--camera', cameraProgress.toFixed(4));
+    portraitFlight.style.setProperty('--intro', (1 - smoothstep(.24, .35, flightProgress)).toFixed(3));
+    portraitFlight.style.setProperty('--hud', (1 - smoothstep(.46, .69, flightProgress)).toFixed(3));
+    portraitFlight.style.setProperty('--phase1', phaseBand(flightProgress, .32, .42, .49, .57).toFixed(3));
+    portraitFlight.style.setProperty('--phase2', phaseBand(flightProgress, .53, .62, .69, .77).toFixed(3));
+    portraitFlight.style.setProperty('--phase3', phaseBand(flightProgress, .73, .81, .88, .94).toFixed(3));
+    portraitFlight.style.setProperty('--sun', smoothstep(.68, 1, flightProgress).toFixed(3));
+    portraitFlight.style.setProperty('--arrival', smoothstep(.89, .97, flightProgress).toFixed(3));
+    const objectStart = innerWidth <= 560 ? 58 : innerWidth <= 900 ? 57 : 50;
+    const objectEnd = innerWidth <= 900 ? 78 : 77;
+    portraitFlight.style.setProperty('--object-x', `${(objectStart + (objectEnd - objectStart) * cameraProgress).toFixed(2)}%`);
+    if (approachReadout) approachReadout.textContent = String(Math.round(flightProgress * 100)).padStart(3, '0');
   }
   ticking = false;
 }

@@ -33,6 +33,7 @@ button { font: inherit; }
 .sound-toggle[aria-pressed=true] .sound-bars i { animation: sound .65s ease-in-out infinite alternate; }
 .sound-toggle[aria-pressed=true] .sound-bars i:nth-child(2) { animation-delay: -.3s; }
 .sound-toggle[aria-pressed=true] .sound-bars i:nth-child(3) { animation-delay: -.15s; }
+.sound-toggle[aria-pressed=true] { color:#dffdf7; text-shadow:0 0 14px rgba(84,227,209,.42); }
 
 .hero { position: relative; min-height: 100svh; display: flex; align-items: center; padding: 9rem clamp(1.25rem,7vw,8rem) 5rem; overflow: hidden; background: linear-gradient(180deg,#5aa4cf 0%,#b8dae8 57%,#efe4d2 100%); color: var(--ink); }
 .hero::after { content: ''; position: absolute; inset: auto 0 0; height: 24%; background: linear-gradient(0deg,rgba(239,228,210,.86),transparent); }

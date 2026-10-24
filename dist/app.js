@@ -162,11 +162,25 @@ setInterval(updateClock, 1000);
 
 let audioContext;
 let engineNodes = [];
+let masterGain;
 const soundButton = $('.sound-toggle');
+const soundLabel = $('.sound-label');
 
 function stopSound() {
-  engineNodes.forEach((node) => { try { node.stop?.(); node.disconnect?.(); } catch (_) {} });
+  const nodesToStop = [...engineNodes];
+  const gainToStop = masterGain;
   engineNodes = [];
+  masterGain = null;
+  if (gainToStop && audioContext) {
+    const now = audioContext.currentTime;
+    gainToStop.gain.cancelScheduledValues(now);
+    gainToStop.gain.setValueAtTime(gainToStop.gain.value, now);
+    gainToStop.gain.linearRampToValueAtTime(0, now + .9);
+  }
+  setTimeout(() => {
+    nodesToStop.forEach((node) => { try { node.stop?.(); node.disconnect?.(); } catch (_) {} });
+    try { gainToStop?.disconnect(); } catch (_) {}
+  }, 950);
 }
 
 soundButton.addEventListener('click', async () => {
@@ -175,29 +189,105 @@ soundButton.addEventListener('click', async () => {
     stopSound();
     soundButton.setAttribute('aria-pressed', 'false');
     soundButton.setAttribute('aria-label', 'Ativar som ambiente');
+    soundButton.dataset.audio = 'off';
+    soundLabel.textContent = 'som';
     return;
   }
   const Ctx = window.AudioContext || window.webkitAudioContext;
-  if (!Ctx) return;
-  audioContext = audioContext || new Ctx();
-  await audioContext.resume();
-  const gain = audioContext.createGain();
-  const filter = audioContext.createBiquadFilter();
-  gain.gain.value = 0.025;
-  filter.type = 'lowpass';
-  filter.frequency.value = 170;
-  gain.connect(filter).connect(audioContext.destination);
-  [48, 73].forEach((frequency) => {
-    const oscillator = audioContext.createOscillator();
-    oscillator.type = 'sine';
-    oscillator.frequency.value = frequency;
-    oscillator.connect(gain);
-    oscillator.start();
-    engineNodes.push(oscillator);
-  });
-  engineNodes.push(gain, filter);
-  soundButton.setAttribute('aria-pressed', 'true');
-  soundButton.setAttribute('aria-label', 'Desativar som ambiente');
+  if (!Ctx) {
+    soundButton.setAttribute('aria-label', 'Som ambiente indisponível neste navegador');
+    return;
+  }
+  try {
+    audioContext = !audioContext || audioContext.state === 'closed' ? new Ctx() : audioContext;
+    await audioContext.resume();
+    const now = audioContext.currentTime;
+
+    masterGain = audioContext.createGain();
+    masterGain.gain.setValueAtTime(0, now);
+    masterGain.gain.linearRampToValueAtTime(.16, now + 1.8);
+    masterGain.connect(audioContext.destination);
+
+    const engineBus = audioContext.createGain();
+    const engineFilter = audioContext.createBiquadFilter();
+    engineBus.gain.value = .36;
+    engineFilter.type = 'lowpass';
+    engineFilter.frequency.value = 520;
+    engineFilter.Q.value = .65;
+    engineBus.connect(engineFilter).connect(masterGain);
+
+    [
+      [82.4, 'sine', .8],
+      [123.6, 'sine', .32],
+      [164.8, 'triangle', .09]
+    ].forEach(([frequency, type, level]) => {
+      const oscillator = audioContext.createOscillator();
+      const voiceGain = audioContext.createGain();
+      oscillator.type = type;
+      oscillator.frequency.value = frequency;
+      voiceGain.gain.value = level;
+      oscillator.connect(voiceGain).connect(engineBus);
+      oscillator.start();
+      engineNodes.push(oscillator, voiceGain);
+    });
+
+    const pulse = audioContext.createOscillator();
+    const pulseDepth = audioContext.createGain();
+    pulse.type = 'sine';
+    pulse.frequency.value = .075;
+    pulseDepth.gain.value = .055;
+    pulse.connect(pulseDepth).connect(engineBus.gain);
+    pulse.start();
+
+    const airBuffer = audioContext.createBuffer(1, audioContext.sampleRate * 4, audioContext.sampleRate);
+    const airData = airBuffer.getChannelData(0);
+    let brown = 0;
+    for (let i = 0; i < airData.length; i += 1) {
+      brown = (brown + (Math.random() * 2 - 1) * .035) / 1.035;
+      airData[i] = brown * 2.8;
+    }
+    const air = audioContext.createBufferSource();
+    const airFilter = audioContext.createBiquadFilter();
+    const airGain = audioContext.createGain();
+    air.buffer = airBuffer;
+    air.loop = true;
+    airFilter.type = 'bandpass';
+    airFilter.frequency.value = 690;
+    airFilter.Q.value = .55;
+    airGain.gain.value = .12;
+    air.connect(airFilter).connect(airGain).connect(masterGain);
+    air.start();
+
+    const padBus = audioContext.createGain();
+    const padFilter = audioContext.createBiquadFilter();
+    padBus.gain.value = .055;
+    padFilter.type = 'lowpass';
+    padFilter.frequency.value = 980;
+    padBus.connect(padFilter).connect(masterGain);
+    [196, 246.94, 293.66].forEach((frequency, index) => {
+      const oscillator = audioContext.createOscillator();
+      const voiceGain = audioContext.createGain();
+      oscillator.type = 'sine';
+      oscillator.frequency.value = frequency;
+      voiceGain.gain.value = index === 0 ? .42 : .24;
+      oscillator.detune.value = index === 1 ? -4 : index === 2 ? 3 : 0;
+      oscillator.connect(voiceGain).connect(padBus);
+      oscillator.start();
+      engineNodes.push(oscillator, voiceGain);
+    });
+
+    engineNodes.push(engineBus, engineFilter, pulse, pulseDepth, air, airFilter, airGain, padBus, padFilter);
+    soundButton.setAttribute('aria-pressed', 'true');
+    soundButton.setAttribute('aria-label', 'Desativar som ambiente');
+    soundButton.dataset.audio = 'playing';
+    soundLabel.textContent = 'som ligado';
+  } catch (_) {
+    stopSound();
+    soundButton.setAttribute('aria-pressed', 'false');
+    soundButton.setAttribute('aria-label', 'Não foi possível iniciar o som ambiente');
+    soundButton.dataset.audio = 'error';
+    soundLabel.textContent = 'som';
+  }
 });
 
 $('.replay-flight').addEventListener('click', () => {

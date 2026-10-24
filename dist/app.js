@@ -16,6 +16,8 @@ const altitude = $('[data-altitude]');
 const topbar = $('.topbar');
 const portraitFlight = $('.portrait-flight');
 const approachReadout = $('[data-approach]');
+const coupleJourney = $('.couple-journey');
+const journeyReadout = $('[data-journey-readout]');
 let ticking = false;
 
 const smoothstep = (edge0, edge1, value) => {
@@ -52,6 +54,24 @@ function updateFlightData() {
     const objectEnd = innerWidth <= 900 ? 78 : 77;
     portraitFlight.style.setProperty('--object-x', `${(objectStart + (objectEnd - objectStart) * cameraProgress).toFixed(2)}%`);
     if (approachReadout) approachReadout.textContent = String(Math.round(flightProgress * 100)).padStart(3, '0');
+  }
+  if (coupleJourney) {
+    const rect = coupleJourney.getBoundingClientRect();
+    const journeyProgress = Math.max(0, Math.min(1, -rect.top / Math.max(1, rect.height - innerHeight)));
+    const easeJourney = smoothstep(0, 1, journeyProgress);
+    const isMobile = innerWidth <= 560;
+    coupleJourney.style.setProperty('--journey', journeyProgress.toFixed(4));
+    coupleJourney.style.setProperty('--journey-x', `${(5.5 - easeJourney * 11).toFixed(2)}%`);
+    coupleJourney.style.setProperty('--journey-scale', (1.18 + Math.sin(journeyProgress * Math.PI) * .045).toFixed(3));
+    coupleJourney.style.setProperty('--journey-focus', `${(isMobile ? 27 : 42) + easeJourney * (isMobile ? 52 : 16)}%`);
+    coupleJourney.style.setProperty('--j-phase1', (1 - smoothstep(.18, .34, journeyProgress)).toFixed(3));
+    coupleJourney.style.setProperty('--j-phase2', phaseBand(journeyProgress, .25, .4, .55, .69).toFixed(3));
+    coupleJourney.style.setProperty('--j-phase3', smoothstep(.63, .8, journeyProgress).toFixed(3));
+    coupleJourney.style.setProperty('--plane-x', `${(12 + easeJourney * 76).toFixed(2)}%`);
+    coupleJourney.style.setProperty('--plane-y', `${(60 - Math.sin(easeJourney * Math.PI) * 30).toFixed(2)}%`);
+    coupleJourney.style.setProperty('--light-a-x', `${(12 + easeJourney * 68).toFixed(2)}%`);
+    coupleJourney.style.setProperty('--light-b-x', `${(76 - easeJourney * 45).toFixed(2)}%`);
+    if (journeyReadout) journeyReadout.textContent = String(Math.round(journeyProgress * 100)).padStart(3, '0');
   }
   ticking = false;
 }
